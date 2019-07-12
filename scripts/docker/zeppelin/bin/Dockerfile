@@ -60,6 +60,7 @@ ENV PATH /opt/conda/bin:$PATH
 RUN echo "$LOG_TAG Install python related packages" && \
     apt-get -y update && \
     apt-get install -y python-dev python-pip && \
+    pip install --upgrade pip && \
     apt-get install -y gfortran && \
     # numerical/algebra packages
     apt-get install -y libblas-dev libatlas-dev liblapack-dev && \
@@ -96,11 +97,14 @@ RUN echo "$LOG_TAG Cleanup" && \
     apt-get autoclean && \
     apt-get clean
 
+# Hard copy the zeppelin bin package into the container
+COPY zeppelin-0.9.0-SNAPSHOT.tar.gz /tmp/zeppelin-${Z_VERSION}-bin-all.tgz
+
 RUN echo "$LOG_TAG Download Zeppelin binary" && \
-    wget -O /tmp/zeppelin-${Z_VERSION}-bin-all.tgz http://archive.apache.org/dist/zeppelin/zeppelin-${Z_VERSION}/zeppelin-${Z_VERSION}-bin-all.tgz && \
+   # wget -O /tmp/zeppelin-${Z_VERSION}-bin-all.tgz http://archive.apache.org/dist/zeppelin/zeppelin-${Z_VERSION}/zeppelin-${Z_VERSION}-bin-all.tgz && \
     tar -zxvf /tmp/zeppelin-${Z_VERSION}-bin-all.tgz && \
     rm -rf /tmp/zeppelin-${Z_VERSION}-bin-all.tgz && \
-    mv /zeppelin-${Z_VERSION}-bin-all ${Z_HOME}
+    mv /zeppelin-${Z_VERSION} ${Z_HOME}
 
 COPY log4j.properties ${Z_HOME}/conf/
 
